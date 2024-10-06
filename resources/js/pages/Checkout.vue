@@ -154,9 +154,9 @@ onMounted(() => {
     window.scrollTo(0, 0);
     basketStore.coupon_code = "";
     paymentMethod.value = paymentType.value;
-    if (!AuthStore.user) {
-        router.push({ name: 'home' });
-    }
+    // if (!AuthStore.user) {
+    //     router.push({ name: 'home' });
+    // }
     AuthStore.showAddressModal = false;
     AuthStore.showChangeAddressModal = false;
 });
