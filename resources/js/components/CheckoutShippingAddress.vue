@@ -5,10 +5,10 @@
                 {{ $t('Shipping Address') }}
             </div>
 
-            <button v-if="authStore.addresses.length > 0" class="text-slate-950 text-base font-normal leading-normal"
+            <!-- <button v-if="authStore.addresses.length > 0" class="text-slate-950 text-base font-normal leading-normal"
                 @click="authStore.showChangeAddressModal = true">
                 {{ $t('Change') }}
-            </button>
+            </button> -->
         </div>
 
         <!-- Shipping Address form -->
@@ -16,13 +16,13 @@
             enter-active-class="transition ease-out duration-300" enter-from-class="transform opacity-0 scale-95"
             enter-to-class="transform opacity-100 scale-100" leave-from-class="transform opacity-100 scale-100"
             leave-to-class="transform opacity-0 scale-95">
-            <div v-if="authStore.addresses.length == 0">
+            <!-- <div v-if="authStore.addresses.length == 0"> -->
                 <address-form />
-            </div>
+            <!-- </div> -->
         </Transition>
 
         <!-- Selected Address -->
-        <div v-if="authStore.addresses.length > 0"
+        <!-- <div v-if="authStore.addresses.length > 0"
             class="mt-4 p-4 flex gap-6 rounded-lg border border-slate-200 w-full">
             <div
                 class="flex w-[60px] sm:w-[88px] bg-slate-50 rounded-lg flex-col gap-2 justify-center items-center shrink-0">
@@ -44,7 +44,7 @@
                 basketStore.address?.post_code }}
                 </div>
             </div>
-        </div>
+        </div> -->
 
         <!-- Change Address Dialog Modal -->
         <AddressChangeDialogModal />
