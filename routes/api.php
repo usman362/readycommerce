@@ -107,6 +107,16 @@ Route::controller(ShopController::class)->group(function () {
     Route::get('/shops/{shop}', 'show');
 });
 
+//cart route
+Route::controller(CartController::class)->group(function () {
+    Route::get('/carts', 'index');
+    Route::post('/cart/store', 'store');
+    Route::post('/cart/increment', 'increment');
+    Route::post('/cart/decrement', 'decrement');
+    Route::post('/cart/delete', 'destroy');
+    Route::post('/cart/checkout', 'checkout');
+});
+
 Route::middleware(['auth:sanctum', 'role:customer'])->group(function () {
 
     //user route
@@ -161,16 +171,6 @@ Route::middleware(['auth:sanctum', 'role:customer'])->group(function () {
         Route::post('/address/store', 'store');
         Route::post('/address/{address}/update', 'update');
         Route::delete('/address/{address}/delete', 'destroy');
-    });
-
-    //cart route
-    Route::controller(CartController::class)->group(function () {
-        Route::get('/carts', 'index');
-        Route::post('/cart/store', 'store');
-        Route::post('/cart/increment', 'increment');
-        Route::post('/cart/decrement', 'decrement');
-        Route::post('/cart/delete', 'destroy');
-        Route::post('/cart/checkout', 'checkout');
     });
 
     // gift route

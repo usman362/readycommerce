@@ -73,12 +73,15 @@ export const useBaskerStore = defineStore("basketStore", {
                     },
                 };
                 const authStore = useAuth();
+                const headers = {};
+        
+                // Only set Authorization header if the user is logged in
+                if (authStore.isAuthenticated) {
+                    headers.Authorization = authStore.token;
+                }
+        
                 axios
-                    .post("/cart/store", data, {
-                        headers: {
-                            Authorization: authStore.token,
-                        },
-                    })
+                    .post("/cart/store", data, { headers })
                     .then((response) => {
                         this.total = response.data.data.total;
                         this.products = response.data.data.cart_items;
@@ -92,11 +95,10 @@ export const useBaskerStore = defineStore("basketStore", {
                         });
                     })
                     .catch((error) => {
-                        if (error.response.status == 401) {
+                        if (error.response.status == 401 && authStore.isAuthenticated) {
                             toast.error("Please login first!", {
                                 position: "bottom-left",
                             });
-                            const authStore = useAuth();
                             authStore.showLoginModal();
                         } else {
                             toast.error(error.response.data.message, {
@@ -105,7 +107,7 @@ export const useBaskerStore = defineStore("basketStore", {
                         }
                     });
             }
-        },
+        },        
 
         fetchCart() {
             const authStore = useAuth();
