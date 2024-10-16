@@ -3,6 +3,7 @@
 # public/assets/img/
 # public/assets/vendor/
 # public/
+/build/
 npm-debug.log
 yarn-error.log
 
