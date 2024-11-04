@@ -32,6 +32,11 @@ class LegalPageSeeder extends Seeder
                 'description' => $faker->randomHtml(),
             ],
             [
+                'title' => 'Cancellation Policy',
+                'slug' => 'cancellation-policy',
+                'description' => $faker->randomHtml(),
+            ],
+            [
                 'title' => 'Shipping and Delivery Policy',
                 'slug' => 'shipping-and-delivery-policy',
                 'description' => $faker->randomHtml(),
@@ -44,7 +49,7 @@ class LegalPageSeeder extends Seeder
         ];
 
         foreach ($legalPages as $legalPage) {
-            LegalPage::create($legalPage);
+            LegalPage::updateOrCreate(['slug' => $legalPage['slug'] ],$legalPage);
         }
     }
 }

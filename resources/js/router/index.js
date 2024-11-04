@@ -23,6 +23,8 @@ const ManageAddress = () => import("../pages/ManageAddress.vue");
 const Support = () => import("../pages/Support.vue");
 const TermsAndConditions = () => import("../pages/TermsAndConditions.vue");
 const PrivacyPolicy = () => import("../pages/PrivacyPolicy.vue");
+const ReturnPolicy = () => import("../pages/ReturnPolicy.vue");
+const CancellationPolicy = () => import("../pages/CancellationPolicy.vue");
 const AddNewAddress = () => import("../pages/AddNewAddress.vue");
 const EditAddress = () => import("../pages/EditAddress.vue");
 const AboutUs = () => import("../pages/AboutUs.vue");
@@ -243,6 +245,22 @@ const routes = [
         path: "/privacy-policy",
         name: "privacy-policy",
         component: PrivacyPolicy,
+        meta: {
+            layout: defaultLayout,
+        },
+    },
+    {
+        path: "/refund-return",
+        name: "refund-return",
+        component: ReturnPolicy,
+        meta: {
+            layout: defaultLayout,
+        },
+    },
+    {
+        path: "/cancellation-return",
+        name: "cancellation-return",
+        component: CancellationPolicy,
         meta: {
             layout: defaultLayout,
         },

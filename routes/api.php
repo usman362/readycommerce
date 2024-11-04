@@ -41,6 +41,9 @@ Route::controller(CountryController::class)->group(function () {
 Route::controller(AuthController::class)->group(function () {
     Route::post('/registration', 'register');
     Route::post('/login', 'login');
+    Route::post('/google-login','googleLogin');
+    Route::post('/facebook-login','facebookLogin');
+    Route::post('/apple-login','appleLogin');
 });
 
 Route::controller(ForgotPasswordController::class)->group(function () {

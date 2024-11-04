@@ -25,9 +25,24 @@ class UserRepository extends Repository
      * @param  datatype  $phone  description
      * @return Some_Return_Value
      */
-    public static function findByPhone($phone)
+    public static function findByPhone($phone,$uid)
     {
-        return self::query()->where('phone', $phone)->orWhere('email', $phone)->isActive()->first();
+        return self::query()->where('phone', $phone)->orWhere('email', $phone)->where('uid',$uid)->isActive()->first();
+    }
+
+    public static function findByGoogle($uid)
+    {
+        return self::query()->where('uid',$uid)->isActive()->first();
+    }
+
+    public static function findByFacebook($uid)
+    {
+        return self::query()->where('uid',$uid)->isActive()->first();
+    }
+    
+    public static function findByApple($uid)
+    {
+        return self::query()->where('uid',$uid)->isActive()->first();
     }
 
     public static function findByContact($contact)
@@ -42,7 +57,7 @@ class UserRepository extends Repository
      *
      * @param  Request  $request  The request object
      */
-    public static function registerNewUser(Request $request): User
+    public static function registerNewUser(Request $request,$uid = null): User
     {
         $thumbnail = null;
         if ($request->hasFile('profile_photo')) {
@@ -64,6 +79,7 @@ class UserRepository extends Repository
             'country' => $request->country,
             'phone_code' => $request->phone_code,
             'is_active' => true,
+            'uid' => $uid
         ]);
     }
 

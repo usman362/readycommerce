@@ -149,6 +149,7 @@ import { ChevronDownIcon, ChevronRightIcon } from '@heroicons/vue/20/solid'
 import { useAuth } from '../stores/AuthStore'
 import { useToast } from 'vue-toastification';
 import { useBaskerStore } from '../stores/BasketStore';
+import { getAuth, signOut } from 'firebase/auth'; 
 
 const authStore = useAuth();
 const basketStore = useBaskerStore();
@@ -168,6 +169,8 @@ const logout = () => {
     basketStore.payable_amount = 0;
     basketStore.delivery_charge = 0;
     basketStore.coupon_discount = 0;
+    const auth = getAuth();
+    signOut(auth);
 
     toast.success('Logout successfully', {
         position: "bottom-left",

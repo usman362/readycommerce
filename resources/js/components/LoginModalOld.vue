@@ -80,11 +80,13 @@
                                         @click="loginFormSubmit">
                                         {{ $t('Log in') }}
                                     </button>
-                                    <button @click="loginWithGoogle">Login with Google</button>
-
-                                    <button @click="loginWithFacebook">Login with Facebook</button>
-
-                                    <button @click="loginWithApple">Login with Apple</button>
+                                    
+                                    <!-- Google Login button -->
+                                    <button
+                                        class="px-6 py-4 bg-primary mt-8 rounded-[10px] text-white text-base font-medium w-full"
+                                        @click="signInWithGoogle">
+                                        {{ $t('Sign In with Google') }}
+                                    </button>
 
                                     <div class="px-4 py-2 mt-6 flex items-center justify-center gap-2">
                                         <div class="text-slate-900 text-base font-normal">
@@ -257,22 +259,6 @@
                                         </span>
                                     </div>
 
-                                    <!-- Email -->
-                                    <div class="mt-8">
-                                        <label class="text-slate-700 text-base font-normal leading-normal mb-2 block">
-                                            {{ $t('Email') }}
-                                        </label>
-
-                                        <input type="email" v-model="registerFormData.email"
-                                            :placeholder="$t('Enter email')"
-                                            class="text-base font-normal w-full p-3 placeholder:text-slate-400 rounded-lg border focus:border-primary outline-none"
-                                            :class="registerErrors?.email ? 'border-red-500' : 'border-slate-200'">
-                                        <span v-if="registerErrors && registerErrors?.email"
-                                            class="text-red-500 text-sm">
-                                            {{ registerErrors?.email[0] }}
-                                        </span>
-                                    </div>
-
                                     <!-- Password -->
                                     <div class="mt-4">
                                         <label class="text-slate-700 text-base font-normal leading-normal mb-2 block">
@@ -295,6 +281,8 @@
                                             {{ registerErrors?.password[0] }}
                                         </span>
                                     </div>
+
+                                    <div id="recaptcha-container"></div>
 
                                     <!-- Forgot Password -->
                                     <div class="mt-6 text-slate-900 text-base font-normal">
@@ -512,9 +500,8 @@ import { useToast } from 'vue-toastification'
 import { useAuth } from '../stores/AuthStore'
 import { useBaskerStore } from '../stores/BasketStore'
 import { useMaster } from '../stores/MasterStore'
-import { initializeApp } from "firebase/app";
-import { getAuth, GoogleAuthProvider, signInWithPopup, FacebookAuthProvider, OAuthProvider } from 'firebase/auth';
-
+import { getAuth, createUserWithEmailAndPassword, signInWithPhoneNumber, 
+GoogleAuthProvider,signInWithPopup,signInWithEmailAndPassword, RecaptchaVerifier } from "firebase/auth";
 import axios from 'axios'
 import { useRouter } from 'vue-router'
 const router = useRouter();
@@ -529,24 +516,6 @@ const showLoginPassword = ref(false);
 const hasForgetPassword = ref(false);
 const forgetPasswordDilog = ref(false);
 const resetPasswordDilog = ref(false);
-
-// Firebase configuration
-const firebaseConfig = {
-    apiKey: "AIzaSyB6yTtXJQFoNMMzzlDi9tsu0QkACHWk1vQ",
-    authDomain: "ready-ecommerce-71775.firebaseapp.com",
-    projectId: "ready-ecommerce-71775",
-    storageBucket: "ready-ecommerce-71775.appspot.com",
-    messagingSenderId: "228278596022",
-    appId: "1:228278596022:web:03473241fcc52b23449117",
-    measurementId: "G-26T7BTC2ZY"
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const provider = new GoogleAuthProvider();
-const facebookProvider = new FacebookAuthProvider();
-const appleProvider = new OAuthProvider('apple.com');
 
 const loginFormData = ref({
     phone: '',
@@ -580,121 +549,47 @@ const fetchCountries = () => {
     })
 }
 
-const loginWithGoogle = () => {
-    signInWithPopup(auth, provider)
-        .then(async (result) => {
-            const user = result.user;
-            const idToken = await user.getIdToken();  // Get Firebase auth token
-
-            // Send the token to your Laravel backend
-            axios.post('/google-login', { token: idToken }).then((response) => {
-                AuthStore.setToken(response.data.data.access.token);
-                AuthStore.setUser(response.data.data.user);
-                AuthStore.hideLoginModal();
-                toast(content, {
-                    type: "default",
-                    hideProgressBar: true,
-                    icon: false,
-                    position: "top-right",
-                    toastClassName: "vue-toastification-alert",
-                    timeout: 3000
-                });
-            }).catch((error) => {
-                toast.error(error.response.data.message, {
-                    position: "bottom-left",
-                });
-                errors.value = error.response.data.errors
-            })
-        })
-        .catch((error) => {
-            console.error('Google Sign-In Error:', error);
-        });
-
-}
-
-const loginWithFacebook = () => {
-    signInWithPopup(auth, facebookProvider)
-        .then(async (result) => {
-            const user = result.user;
-            const idToken = await user.getIdToken();  // Get Firebase auth token
-
-            // Send the token to your Laravel backend
-            axios.post('/facebook-login', { token: idToken }).then((response) => {
-                AuthStore.setToken(response.data.data.access.token);
-                AuthStore.setUser(response.data.data.user);
-                AuthStore.hideLoginModal();
-                toast(content, {
-                    type: "default",
-                    hideProgressBar: true,
-                    icon: false,
-                    position: "top-right",
-                    toastClassName: "vue-toastification-alert",
-                    timeout: 3000
-                });
-            }).catch((error) => {
-                toast.error(error.response.data.message, {
-                    position: "bottom-left",
-                });
-                errors.value = error.response.data.errors
-            })
-        })
-        .catch((error) => {
-            console.error('Facebook Sign-In Error:', error);
-        });
-
-}
-const loginWithApple = () => {
-    signInWithPopup(auth, appleProvider)
-        .then(async (result) => {
-            const user = result.user;
-            const idToken = await user.getIdToken();  // Get Firebase auth token
-
-            // Send the token to your Laravel backend
-            axios.post('/apple-login', { token: idToken }).then((response) => {
-                AuthStore.setToken(response.data.data.access.token);
-                AuthStore.setUser(response.data.data.user);
-                AuthStore.hideLoginModal();
-                toast(content, {
-                    type: "default",
-                    hideProgressBar: true,
-                    icon: false,
-                    position: "top-right",
-                    toastClassName: "vue-toastification-alert",
-                    timeout: 3000
-                });
-            }).catch((error) => {
-                toast.error(error.response.data.message, {
-                    position: "bottom-left",
-                });
-                errors.value = error.response.data.errors
-            })
-        })
-        .catch((error) => {
-            console.error('Apple Sign-In Error:', error);
-        });
-
-}
+// const loginFormSubmit = () => {
+// axios.post('/login', loginFormData.value).then((response) => {
+//     AuthStore.setToken(response.data.data.access.token);
+//     AuthStore.setUser(response.data.data.user);
+//     AuthStore.hideLoginModal();
+//     baskerStore.fetchCart();
+//     toast(content, {
+//         type: "default",
+//         hideProgressBar: true,
+//         icon: false,
+//         position: "top-right",
+//         toastClassName: "vue-toastification-alert",
+//         timeout: 3000
+//     });
+// }).catch((error) => {
+//     toast.error(error.response.data.message, {
+//         position: "bottom-left",
+//     });
+//     errors.value = error.response.data.errors
+// })
+// }
 
 const loginFormSubmit = () => {
-    axios.post('/login', loginFormData.value).then((response) => {
-        AuthStore.setToken(response.data.data.access.token);
-        AuthStore.setUser(response.data.data.user);
-        AuthStore.hideLoginModal();
-        baskerStore.fetchCart();
-        toast(content, {
-            type: "default",
-            hideProgressBar: true,
-            icon: false,
-            position: "top-right",
-            toastClassName: "vue-toastification-alert",
-            timeout: 3000
+    const { phone, password } = loginFormData.value;
+    signInWithEmailAndPassword(getAuth(), phone, password)
+        .then((response) => {
+            toast(content, {
+                type: "default",
+                hideProgressBar: true,
+                icon: false,
+                position: "top-right",
+                toastClassName: "vue-toastification-alert",
+                timeout: 3000
+            });
+        })
+        .catch((error) => {
+            toast.error(error.message, {
+                position: "bottom-left",
+            });
+            errors.value = { general: error.message };
         });
-    }).catch((error) => {
-        toast.error(error.response.data.message, {
-            position: "bottom-left",
-        });
-        errors.value = error.response.data.errors
-    })
 }
 
 const registerDilog = ref(false);
@@ -766,7 +661,7 @@ const registerFormData = ref({
 
 watch(() => registerFormData.value.country, () => {
     var findCountry = countries.value.find((country) => country.name == registerFormData.value.country);
-    registerFormData.value.phone_code = findCountry.phone_code
+    registerFormData.value.phone_code = findCountry.phone_code;
 })
 
 const registerMessage = {
@@ -779,64 +674,101 @@ const registerMessage = {
 
 const registerErrors = ref({});
 
-const registerFormSubmit = () => {
+const registerFormSubmit = async () => {
+
     if (!registerFormData.value.country) {
         registerErrors.value = {
             country: ['The country field is required']
-        }
-        return
+        };
+        return;
     } else {
-        registerErrors.value = {}
+        registerErrors.value = {};
     }
 
-    axios.post('/registration', registerFormData.value).then((response) => {
-        AuthStore.setToken(response.data.data.access.token);
-        AuthStore.setUser(response.data.data.user);
+    try {
+        // Register the user using Firebase Auth
+        const userCredential = await createUserWithEmailAndPassword(getAuth(), registerFormData.value.phone + '@example.com', registerFormData.value.password)
+            .then((data) => {
 
-        toast(registerMessage, {
-            type: "default",
-            hideProgressBar: true,
-            icon: false,
-            position: "top-right",
-            toastClassName: "vue-toastification-alert",
-            timeout: 3000
+                // Show success message using toast
+                toast(registerMessage, {
+                    type: "default",
+                    hideProgressBar: true,
+                    icon: false,
+                    position: "top-right",
+                    toastClassName: "vue-toastification-alert",
+                    timeout: 3000
+                });
+
+                // Reset form fields
+                registerFormData.value.name = '';
+                registerFormData.value.password = '';
+                registerFormData.value.country = null;
+                registerFormData.value.phone_code = null;
+
+                // Hide the registration dialog and trigger OTP sending
+                registerDilog.value = false;
+                registerErrors.value = {};
+                // sendOTP(registerFormData.value.phone, registerFormData.value.phone_code);
+            })
+            .catch((error) => {
+                console.log(error.code);
+            });
+        // Store user data in the AuthStore
+        AuthStore.setToken(await userCredential.user.getIdToken());
+        AuthStore.setUser(userCredential.user);
+        // Update the user's profile with their name
+        await updateProfile(userCredential.user, {
+            displayName: registerFormData.value.name
         });
-
-        registerFormData.value.name = '';
-        registerFormData.value.password = '';
-        registerFormData.value.country = null;
-        registerFormData.value.phone_code = null;
-
-        registerDilog.value = false
-        registerErrors.value = {}
-        sendOTP(registerFormData.value.phone, registerFormData.value.phone_code)
-    }).catch((error) => {
-        registerErrors.value = error.response.data.errors
-    })
-}
+    } catch (error) {
+        // Handle errors
+        registerErrors.value = { message: error.message };
+    }
+};
 
 const sendOTPNumber = ref('');
 const phoneCode = ref(null);
 
-const sendOTP = (phoneNumber = '', phone_code = null) => {
+const sendOTP = async (phoneNumber = '', phone_code = null) => {
     if (phoneNumber) {
-        sendOTPNumber.value = phoneNumber
-        phoneCode.value = phone_code
+        sendOTPNumber.value = phoneNumber;
+        phoneCode.value = phone_code;
     }
-    axios.post('/send-otp', { phone: sendOTPNumber.value, phone_code: phoneCode.value }).then((response) => {
-        OTPDilog.value = true
-        time.value = 60
+
+    // Configure Firebase RecaptchaVerifier
+    const recaptchaVerifier = new RecaptchaVerifier('recaptcha-container', {
+        size: 'invisible',
+        callback: (response) => {
+            // reCAPTCHA solved, allow OTP sending
+        }
+    }, getAuth());
+
+    const fullPhoneNumber = `${phoneCode.value}${sendOTPNumber.value}`;
+
+    try {
+        const confirmationResult = await signInWithPhoneNumber(getAuth(), fullPhoneNumber, recaptchaVerifier);
+
+        // OTP dialog appears and countdown begins
+        OTPDilog.value = true;
+        time.value = 60;
         onTimer();
-        toast.success(response.data.message, {
+
+        toast.success("OTP sent successfully!", {
             position: "bottom-left",
         });
-        forgetPasswordDilog.value = false
-    }).catch((error) => {
-        toast.error(error.response.data.message, {
-            position: "bottom-left",
-        });
-    })
-}
+
+        // Store confirmation result for later OTP verification
+        AuthStore.setConfirmationResult(confirmationResult);
+        forgetPasswordDilog.value = false;
+    } catch (error) {
+        // toast.error(error.message, {
+        //     position: "bottom-left",
+        // });
+        console.log('error', error);
+    }
+};
+
 
 const resetPassword = ref({
     password: '',
@@ -844,23 +776,35 @@ const resetPassword = ref({
     token: ''
 });
 
-const verifyOTP = () => {
+const verifyOTP = async () => {
     const otp = inputs.value.map(input => input.value).join('');
-    axios.post('/verify-otp', { phone: sendOTPNumber.value, otp: otp }).then((response) => {
-        toast.success(response.data.message, {
+
+    try {
+        // Retrieve the confirmationResult from the AuthStore
+        const confirmationResult = AuthStore.getConfirmationResult();
+
+        // Verify the OTP
+        const result = await confirmationResult.confirm(otp);
+        const user = result.user;
+
+        // Handle successful verification
+        toast.success("OTP verified successfully!", {
             position: "bottom-left",
         });
-        OTPDilog.value = false,
-            resetPassword.value.token = response.data.data.token
-        if (hasForgetPassword) {
-            resetPasswordDilog.value = true
+
+        OTPDilog.value = false;
+        resetPassword.value.token = await user.getIdToken();
+
+        if (hasForgetPassword.value) {
+            resetPasswordDilog.value = true;
         }
-    }).catch((error) => {
-        toast.error(error.response.data.message, {
+    } catch (error) {
+        toast.error(error.message, {
             position: "bottom-left",
         });
-    })
-}
+    }
+};
+
 
 const showTerms = () => {
     registerDilog.value = false
@@ -936,4 +880,15 @@ const resetPasswordSubmit = () => {
     })
 }
 
+const signInWithGoogle = () => {
+    const provider = new GoogleAuthProvider();
+    console.log(provider);
+    signInWithPopup(getAuth(),provider)
+    .then((result) => {
+        console.log(result);
+    })
+    .catch((error) => {
+        console.log(error);
+    })
+}
 </script>
