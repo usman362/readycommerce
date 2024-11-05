@@ -258,8 +258,8 @@ const routes = [
         },
     },
     {
-        path: "/cancellation-return",
-        name: "cancellation-return",
+        path: "/cancellation-policy",
+        name: "cancellation-policy",
         component: CancellationPolicy,
         meta: {
             layout: defaultLayout,
