@@ -142,7 +142,7 @@ class AuthController extends Controller
         try {
             $verifiedIdToken = $this->firebaseauth->verifyIdToken($request->token);
             $firebaseUserId = $verifiedIdToken->claims()->get('sub');
-            // dd($verifiedIdToken->claims());
+            dd($verifiedIdToken->claims());
             // You can now find or create a user in your Laravel system based on Firebase UID
             $user = User::firstOrCreate([
                 'uid' => $firebaseUserId,
