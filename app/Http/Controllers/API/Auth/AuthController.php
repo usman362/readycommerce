@@ -102,6 +102,8 @@ class AuthController extends Controller
     public function googleLogin(Request $request)
     {
         try {
+            
+            $uniquePhoneNumber = '9' . str_pad(random_int(100000000, 999999999), 9, '0', STR_PAD_LEFT);
             $verifiedIdToken = $this->firebaseauth->verifyIdToken($request->token);
             $firebaseUserId = $verifiedIdToken->claims()->get('sub');
             // dd($verifiedIdToken->claims());
@@ -111,7 +113,7 @@ class AuthController extends Controller
             ], [
                 'email' => $verifiedIdToken->claims()->get('email'),
                 'name' => $verifiedIdToken->claims()->get('name'),
-                'phone' =>  rand(7,7),
+                'phone' =>  (int)$uniquePhoneNumber,
                 'password' => Hash::make('123456')
 
             ]);
