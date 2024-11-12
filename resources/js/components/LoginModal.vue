@@ -80,11 +80,13 @@
                                         @click="loginFormSubmit">
                                         {{ $t('Log in') }}
                                     </button>
-                                    <button @click="loginWithGoogle">Login with Google</button>
-
-                                    <button @click="loginWithFacebook">Login with Facebook</button>
-
-                                    <button @click="loginWithApple">Login with Apple</button>
+                                    <center>
+                                        <button class="loginBtn loginBtn--google" @click="loginWithGoogle">Login with Google</button>
+    
+                                        <button class="loginBtn loginBtn--facebook" @click="loginWithFacebook">Login with Facebook</button>
+    
+                                        <button class="loginBtn loginBtn--apple" @click="loginWithApple">Login with Apple</button>
+                                    </center>
 
                                     <div class="px-4 py-2 mt-6 flex items-center justify-center gap-2">
                                         <div class="text-slate-900 text-base font-normal">
@@ -500,6 +502,88 @@
         <!-- end Registration dialog -->
     </div>
 </template>
+
+<style>
+
+/* Shared */
+.loginBtn {
+  box-sizing: border-box;
+  position: relative;
+  width: 17em;
+  margin: 0.2em;
+  padding: 0 15px 0 46px;
+  border: none;
+  text-align: left;
+  line-height: 34px;
+  white-space: nowrap;
+  border-radius: 0.2em;
+  font-size: 16px;
+  color: #FFF;
+}
+.loginBtn:before {
+  content: "";
+  box-sizing: border-box;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 34px;
+  height: 100%;
+}
+.loginBtn:focus {
+  outline: none;
+}
+.loginBtn:active {
+  box-shadow: inset 0 0 0 32px rgba(0,0,0,0.1);
+}
+
+
+/* Facebook */
+.loginBtn--facebook {
+  background-color: #4C69BA;
+  background-image: linear-gradient(#4C69BA, #3B55A0);
+  /*font-family: "Helvetica neue", Helvetica Neue, Helvetica, Arial, sans-serif;*/
+  text-shadow: 0 -1px 0 #354C8C;
+}
+.loginBtn--facebook:before {
+  border-right: #364e92 1px solid;
+  background: url('https://s3-us-west-2.amazonaws.com/s.cdpn.io/14082/icon_facebook.png') 6px 6px no-repeat;
+}
+.loginBtn--facebook:hover,
+.loginBtn--facebook:focus {
+  background-color: #5B7BD5;
+  background-image: linear-gradient(#5B7BD5, #4864B1);
+}
+
+
+/* Google */
+.loginBtn--google {
+  /*font-family: "Roboto", Roboto, arial, sans-serif;*/
+  background: #DD4B39;
+  margin-top: 12px;
+}
+.loginBtn--google:before {
+  border-right: #BB3F30 1px solid;
+  background: url('https://s3-us-west-2.amazonaws.com/s.cdpn.io/14082/icon_google.png') 6px 6px no-repeat;
+}
+.loginBtn--google:hover,
+.loginBtn--google:focus {
+  background: #E74B37;
+}
+
+/* Apple */
+.loginBtn--apple {
+  /*font-family: "Roboto", Roboto, arial, sans-serif;*/
+  background: #000;
+}
+.loginBtn--apple:before {
+  border-right: #fff 1px solid;
+  background: url('https://srdproject.com/assets/images/apple-22.png') 6px 6px no-repeat;
+}
+.loginBtn--apple:hover,
+.loginBtn--apple:focus {
+  background: #000;
+}
+</style>
 
 <script setup>
 import { Dialog, DialogPanel, TransitionChild, TransitionRoot } from '@headlessui/vue'
