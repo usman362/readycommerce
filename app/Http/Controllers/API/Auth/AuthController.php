@@ -139,7 +139,7 @@ class AuthController extends Controller
 
     public function facebookLogin(Request $request)
     {
-        try {
+        // try {
             $verifiedIdToken = $this->firebaseauth->verifyIdToken($request->token);
             $firebaseUserId = $verifiedIdToken->claims()->get('sub');
             dd($verifiedIdToken->claims());
@@ -168,9 +168,9 @@ class AuthController extends Controller
             }
             // Create a session or return a Laravel Sanctum token
             return response()->json(['message' => 'Logged in', 'user' => $user], 200);
-        } catch (\Exception $e) {
-            return response()->json(['error' => 'Unauthorized'], 401);
-        }
+        // } catch (\Exception $e) {
+        //     return response()->json(['error' => 'Unauthorized'], 401);
+        // }
     }
    
     public function appleLogin(Request $request)
