@@ -2,7 +2,7 @@
     <div class="main-container mt-6 mb-12">
 
         <div class="flex justify-between items-center gap-4 flex-wrap">
-            <div class="text-slate-950 text-lg  md:text-3xl font-bold leading-9">{{ $t('Categories') }}</div>
+            <div class="text-slate-950 text-lg  md:text-3xl font-bold leading-9">{{ $t('Categories1') }}</div>
 
             <div class="flex justify-center items-center gap-4">
                 <button class="w-11 h-11 rounded-xl justify-center items-center gap-2 flex" @click="swiperPrevSlide">
