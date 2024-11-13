@@ -700,7 +700,6 @@ const loginWithFacebook = () => {
     signInWithPopup(auth, facebookProvider)
         .then(async (result) => {
             const user = result.user;
-            console.log('user',user);
             const idToken = await user.getIdToken();  // Get Firebase auth token
 
             // Send the token to your Laravel backend
