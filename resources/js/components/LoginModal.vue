@@ -698,9 +698,10 @@ const loginWithGoogle = () => {
 
 const loginWithFacebook = () => {
     signInWithPopup(auth, facebookProvider)
-        .then(async (result) => {
-            const user = result.user;
-            const idToken = await user.getIdToken();  // Get Firebase auth token
+    // .then(async (result) => {
+    //     console.log(result);
+        //     const user = result.user;
+        //     const idToken = await user.getIdToken();
 
             // Send the token to your Laravel backend
             // axios.post('/facebook-login', { token: idToken }).then((response) => {
@@ -721,10 +722,11 @@ const loginWithFacebook = () => {
             //     });
             //     errors.value = error.response.data.errors
             // })
-        })
-        .catch((error) => {
-            console.error('Facebook Sign-In Error:', error);
-        });
+        // })
+        // .catch((error) => {
+        //     console.error('Facebook Sign-In Error:', error);
+        //     console.log('error', error)
+        // });
 
 }
 const loginWithApple = () => {
