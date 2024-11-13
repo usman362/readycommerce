@@ -703,24 +703,24 @@ const loginWithFacebook = () => {
             const idToken = await user.getIdToken();  // Get Firebase auth token
 
             // Send the token to your Laravel backend
-            axios.post('/facebook-login', { token: idToken }).then((response) => {
-                AuthStore.setToken(response.data.data.access.token);
-                AuthStore.setUser(response.data.data.user);
-                AuthStore.hideLoginModal();
-                toast(content, {
-                    type: "default",
-                    hideProgressBar: true,
-                    icon: false,
-                    position: "top-right",
-                    toastClassName: "vue-toastification-alert",
-                    timeout: 3000
-                });
-            }).catch((error) => {
-                toast.error(error.response.data.message, {
-                    position: "bottom-left",
-                });
-                errors.value = error.response.data.errors
-            })
+            // axios.post('/facebook-login', { token: idToken }).then((response) => {
+            //     AuthStore.setToken(response.data.data.access.token);
+            //     AuthStore.setUser(response.data.data.user);
+            //     AuthStore.hideLoginModal();
+            //     toast(content, {
+            //         type: "default",
+            //         hideProgressBar: true,
+            //         icon: false,
+            //         position: "top-right",
+            //         toastClassName: "vue-toastification-alert",
+            //         timeout: 3000
+            //     });
+            // }).catch((error) => {
+            //     toast.error(error.response.data.message, {
+            //         position: "bottom-left",
+            //     });
+            //     errors.value = error.response.data.errors
+            // })
         })
         .catch((error) => {
             console.error('Facebook Sign-In Error:', error);
