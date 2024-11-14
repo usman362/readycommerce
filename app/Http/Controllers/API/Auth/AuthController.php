@@ -140,6 +140,7 @@ class AuthController extends Controller
     public function facebookLogin(Request $request)
     {
         try {
+            $uniquePhoneNumber = '9' . str_pad(random_int(100000000, 999999999), 9, '0', STR_PAD_LEFT);
             $verifiedIdToken = $this->firebaseauth->verifyIdToken($request->token);
             $firebaseUserId = $verifiedIdToken->claims()->get('sub');
             // You can now find or create a user in your Laravel system based on Firebase UID
@@ -148,7 +149,7 @@ class AuthController extends Controller
             ], [
                 'email' => $verifiedIdToken->claims()->get('email'),
                 'name' => $verifiedIdToken->claims()->get('name'),
-                'phone' =>  rand(7,7),
+                'phone' =>  (int)$uniquePhoneNumber,
                 'password' => Hash::make('123456')
 
             ]);
