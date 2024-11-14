@@ -139,10 +139,9 @@ class AuthController extends Controller
 
     public function facebookLogin(Request $request)
     {
-        // try {
+        try {
             $verifiedIdToken = $this->firebaseauth->verifyIdToken($request->token);
             $firebaseUserId = $verifiedIdToken->claims()->get('sub');
-            dd($verifiedIdToken->claims());
             // You can now find or create a user in your Laravel system based on Firebase UID
             $user = User::firstOrCreate([
                 'uid' => $firebaseUserId,
@@ -168,9 +167,9 @@ class AuthController extends Controller
             }
             // Create a session or return a Laravel Sanctum token
             return response()->json(['message' => 'Logged in', 'user' => $user], 200);
-        // } catch (\Exception $e) {
-        //     return response()->json(['error' => 'Unauthorized'], 401);
-        // }
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
     }
    
     public function appleLogin(Request $request)
