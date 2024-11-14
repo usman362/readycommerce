@@ -36,10 +36,8 @@ class AuthController extends Controller
      */
     public function register(RegistrationRequest $request)
     {
-        $user = $this->firebaseauth->createUserWithEmailAndPassword($request->email, $request->password);
-
         // Create a new user
-        $user = UserRepository::registerNewUser($request,$user->uid);
+        $user = UserRepository::registerNewUser($request);
 
         if ($request->device_key) {
             DeviceKeyRepository::storeByRequest($user, $request);
@@ -81,9 +79,7 @@ class AuthController extends Controller
     public function login(LoginRequest $request)
     {
         // Authenticate the user
-        $signInResult = $this->firebaseauth->signInWithEmailAndPassword($request['phone'], $request['password']);
-        
-        $user = $this->authenticate($request,$signInResult->data()['localId']);
+        $user = $this->authenticate($request);
         if ($user?->customer) {
 
             if ($request->device_key) {
