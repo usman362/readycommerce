@@ -696,39 +696,80 @@ const loginWithGoogle = () => {
 
 }
 
+// const loginWithFacebook = () => {
+//     signInWithPopup(auth, facebookProvider)
+//         .then(async (result) => {
+//             const user = result.user;
+//             const idToken = await user.getIdToken();  // Get Firebase auth token
+
+//             // Send the token to your Laravel backend
+//             axios.post('/facebook-login', { token: idToken }).then((response) => {
+//                 AuthStore.setToken(response.data.data.access.token);
+//                 AuthStore.setUser(response.data.data.user);
+//                 AuthStore.hideLoginModal();
+//                 toast(content, {
+//                     type: "default",
+//                     hideProgressBar: true,
+//                     icon: false,
+//                     position: "top-right",
+//                     toastClassName: "vue-toastification-alert",
+//                     timeout: 3000
+//                 });
+//             }).catch((error) => {
+//                 toast.error(error.response.data.message, {
+//                     position: "bottom-left",
+//                 });
+//                 errors.value = error.response.data.errors
+//             })
+//         })
+//         .catch((error) => {
+//             console.error('Facebook Sign-In Error:', error);
+//         });
+
+// }
+
 const loginWithFacebook = () => {
-    signInWithPopup(auth, facebookProvider)
-    // .then(async (result) => {
-    //     console.log(result);
-        //     const user = result.user;
-        //     const idToken = await user.getIdToken();
+    // Create an instance of the Facebook provider object
+    const facebookProvider = new firebase.auth.FacebookAuthProvider();
 
-            // Send the token to your Laravel backend
-            // axios.post('/facebook-login', { token: idToken }).then((response) => {
-            //     AuthStore.setToken(response.data.data.access.token);
-            //     AuthStore.setUser(response.data.data.user);
-            //     AuthStore.hideLoginModal();
-            //     toast(content, {
-            //         type: "default",
-            //         hideProgressBar: true,
-            //         icon: false,
-            //         position: "top-right",
-            //         toastClassName: "vue-toastification-alert",
-            //         timeout: 3000
-            //     });
-            // }).catch((error) => {
-            //     toast.error(error.response.data.message, {
-            //         position: "bottom-left",
-            //     });
-            //     errors.value = error.response.data.errors
-            // })
-        // })
-        // .catch((error) => {
-        //     console.error('Facebook Sign-In Error:', error);
-        //     console.log('error', error)
-        // });
+    // Use signInWithRedirect instead of signInWithPopup
+    firebase.auth().signInWithRedirect(facebookProvider);
 
-}
+    // After redirecting back from Facebook, we need to handle the result
+    firebase.auth().getRedirectResult()
+        .then(async (result) => {
+            if (result.user) {
+                const user = result.user;
+                const idToken = await user.getIdToken();  // Get Firebase auth token
+
+                // Send the token to your Laravel backend
+                axios.post('/facebook-login', { token: idToken })
+                    .then((response) => {
+                        AuthStore.setToken(response.data.data.access.token);
+                        AuthStore.setUser(response.data.data.user);
+                        AuthStore.hideLoginModal();
+                        toast(content, {
+                            type: "default",
+                            hideProgressBar: true,
+                            icon: false,
+                            position: "top-right",
+                            toastClassName: "vue-toastification-alert",
+                            timeout: 3000
+                        });
+                    })
+                    .catch((error) => {
+                        toast.error(error.response.data.message, {
+                            position: "bottom-left",
+                        });
+                        errors.value = error.response.data.errors;
+                    });
+            }
+        })
+        .catch((error) => {
+            console.error('Facebook Sign-In Error:', error);
+        });
+};
+
 const loginWithApple = () => {
     signInWithPopup(auth, appleProvider)
         .then(async (result) => {
